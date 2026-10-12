@@ -1,0 +1,85 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Python environments and packaging
+.venv/
+venv/
+env/
+.conda/
+build/
+dist/
+*.egg-info/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.out
+*.err
+
+# Common compiled and binary files
+*.a
+*.bin
+*.class
+*.dll
+*.dylib
+*.exe
+*.lib
+*.o
+*.obj
+*.pdb
+*.pyc
+*.pyd
+*.so
+
+# Archives
+*.7z
+*.bz2
+*.gz
+*.rar
+*.tar
+*.tgz
+*.xz
+*.zip
+
+# Models, checkpoints, and serialized arrays
+*.model
+*.ckpt
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.onnx
+*.pickle
+*.pkl
+*.pt
+*.pth
+
+# ASE, PLUMED, and simulation runtime output
+*.traj
+*.restart
+COLVAR
+HILLS
+bck.*
+plumed.log
+
+# Jupyter
+.ipynb_checkpoints/
+
