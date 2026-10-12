@@ -36,9 +36,28 @@ class AtomCountCalculator(Calculator):
         self.results["energy"] = float(len(atoms))
 
 
+class HarmonicCalculator(Calculator):
+    implemented_properties = ["energy", "forces"]
+
+    def calculate(
+        self, atoms=None, properties=("energy",), system_changes=all_changes
+    ) -> None:
+        super().calculate(atoms, properties, system_changes)
+        self.results["energy"] = 0.5 * float((atoms.positions**2).sum())
+        self.results["forces"] = -atoms.positions.copy()
+
+
 class FakeOrcaOutput:
     def get_final_energy(self) -> float:
         return -1.25
+
+    def get_structure(self, *, index=-1, fallback=True):
+        from opi.input.structures.structure import Structure
+
+        return Structure.from_lists(["H"], [(0.0, 0.0, 0.25)])
+
+    def geometry_optimization_converged(self) -> bool:
+        return True
 
 
 class FakeOpiCalculator:
@@ -168,6 +187,60 @@ class MoleculeTestCase(unittest.TestCase):
         self.assertEqual(molecule.info["energy_backend"], "orca-pi")
         self.assertEqual(calculator.structure.multiplicity, 2)
         self.assertEqual(calculator.timeout, 30)
+
+    def test_molecule_geometry_optimization_preserves_input(self) -> None:
+        molecule = Molecule("H", positions=[[1.0, 0.0, 0.0]])
+
+        optimized = molecule.get_GeoOptimization(
+            calculator=HarmonicCalculator(),
+            fmax=1.0e-4,
+            steps=100,
+            logfile=None,
+        )
+
+        self.assertAlmostEqual(molecule.positions[0, 0], 1.0)
+        self.assertAlmostEqual(optimized.positions[0, 0], 0.0, places=3)
+        self.assertTrue(optimized.info["optimization_converged"])
+        self.assertLess(optimized.info["max_force_ev_per_angstrom"], 1.0e-4)
+
+    def test_group_geometry_optimization_builds_default_mace_once(self) -> None:
+        calculator = HarmonicCalculator()
+        group = MoleculeGroup(
+            [
+                Atoms("H", positions=[[1.0, 0.0, 0.0]]),
+                Atoms("H", positions=[[0.0, 1.0, 0.0]]),
+            ]
+        )
+
+        with patch(
+            "molecule.energy.get_mace_omol_calculator",
+            return_value=calculator,
+        ) as factory:
+            optimized = group.get_GeoOptimization(
+                fmax=1.0e-4, steps=100, logfile=None
+            )
+
+        self.assertEqual(len(optimized), 2)
+        self.assertTrue(all(frame.info["optimization_converged"] for frame in optimized))
+        factory.assert_called_once()
+
+    def test_geometry_optimization_supports_orca_python_interface(self) -> None:
+        molecule = Molecule("H", positions=[[1.0, 0.0, 0.0]])
+        calculator = FakeOpiCalculator()
+
+        optimized = molecule.get_GeoOptimization(
+            calculator=calculator,
+            backend="orca",
+            multiplicity=2,
+            timeout=45,
+        )
+
+        self.assertAlmostEqual(optimized.positions[0, 2], 0.25)
+        self.assertTrue(optimized.info["optimization_converged"])
+        self.assertAlmostEqual(optimized.info["energy"], -1.25 * Hartree)
+        self.assertEqual(optimized.info["optimization_backend"], "orca-pi")
+        self.assertEqual(calculator.structure.multiplicity, 2)
+        self.assertEqual(calculator.timeout, 45)
 
 
 if __name__ == "__main__":

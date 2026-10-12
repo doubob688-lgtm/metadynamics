@@ -39,6 +39,18 @@ This workspace is for metadynamics research into the reactivity of a novel diazi
 - Automatically fall back to the corresponding CPU implementation when CUDA, GPU4PySCF, or another GPU dependency is unavailable. The fallback should be clear in logs and must not otherwise change the intended scientific method.
 - Do not fail solely because GPU acceleration is unavailable unless the user explicitly requests GPU-only execution.
 
+## PBS and HPC execution
+
+- This package may be run on high-performance computing systems managed by PBS.
+- Keep runnable workflows compatible with non-interactive PBS batch jobs. Do not assume an interactive shell, desktop session, or locally configured shell startup files.
+- Place reusable PBS submission scripts in `script/` and generated scheduler logs and calculation outputs in run-specific directories under `result/`.
+- PBS scripts must request resources explicitly, including walltime, memory, CPU cores, and GPU resources when applicable. Do not assume that a login node may be used for calculations.
+- Use the scheduler-provided working-directory and job identifiers where available, and make input, model, output, and restart paths explicit.
+- Initialize Conda in the batch shell as needed and activate `/home/bob/miniconda3/envs/metad312`, or invoke `/home/bob/miniconda3/envs/metad312/bin/python` directly.
+- Respect scheduler-provided CPU and GPU allocations. Configure thread counts and process counts from the allocated resources rather than from the full host capacity.
+- Request a GPU queue/resource for CUDA workflows. Retain the documented automatic CPU fallback when a GPU is not allocated or unavailable, unless a job is explicitly GPU-only.
+- Make long calculations restartable where practical, preserve checkpoints, and handle PBS termination signals or approaching walltime cleanly.
+
 ## Validation
 
 - Before launching an expensive calculation, run a short smoke test that validates imports, calculator construction, ASE–PLUMED coupling, device selection, and basic force/energy evaluation.

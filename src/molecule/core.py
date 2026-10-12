@@ -13,6 +13,7 @@ from ase.calculators.calculator import BaseCalculator
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
+    from ase.optimize.optimize import Optimizer
 
 
 class Molecule(Atoms):
@@ -165,6 +166,154 @@ class Molecule(Atoms):
         self.info["energy_backend"] = "mace-omol" if mace_backend else "ase-orca"
         return energy_ev
 
+    def get_GeoOptimization(
+        self,
+        calculator: Any | None = None,
+        *,
+        backend: str = "mace",
+        model_path: str | Path | None = None,
+        device: str | None = None,
+        charge: int | None = None,
+        multiplicity: int | None = None,
+        default_dtype: str = "float64",
+        optimizer: str | type[Optimizer] = "LBFGS",
+        fmax: float = 0.05,
+        steps: int = 500,
+        logfile: str | Path | None = None,
+        trajectory: str | Path | None = None,
+        restart: str | Path | None = None,
+        optimizer_kwargs: dict[str, Any] | None = None,
+        timeout: int = -1,
+        inplace: bool = False,
+        raise_on_failure: bool = False,
+        **calculator_kwargs: Any,
+    ) -> Molecule:
+        """Optimize this molecule starting from its current geometry.
+
+        The local MACE OMol model and ASE LBFGS are used by default. The input
+        molecule is preserved unless ``inplace=True``. A configured ORCA Python
+        Interface calculator may be supplied with ``backend="orca"``; its
+        method and basis-set configuration are retained and the ORCA ``OPT``
+        task is added automatically.
+        """
+        from .energy import (
+            get_mace_omol_calculator,
+            is_cuda_failure,
+            is_opi_calculator,
+        )
+        from .optimization import optimize_with_ase, optimize_with_opi
+
+        normalized_backend = backend.lower().replace("_", "-")
+        mace_backend = normalized_backend in {"mace", "mace-omol", "omol"}
+        orca_backend = normalized_backend in {"orca", "orca-pi", "opi"}
+        if not mace_backend and not orca_backend:
+            raise ValueError(
+                f"Unsupported optimization backend {backend!r}; "
+                "expected 'mace' or 'orca'"
+            )
+        if calculator is not None and calculator_kwargs:
+            raise TypeError(
+                "calculator_kwargs cannot be used with a preconfigured calculator"
+            )
+
+        target = self if inplace else Molecule.from_atoms(self)
+        molecular_charge = _resolve_integer_metadata(
+            target, explicit=charge, key="charge", default=0
+        )
+        molecular_multiplicity = _resolve_integer_metadata(
+            target, explicit=multiplicity, key="spin", default=1, minimum=1
+        )
+        target.info["charge"] = molecular_charge
+        target.info["spin"] = molecular_multiplicity
+
+        if calculator is not None and is_opi_calculator(calculator):
+            result = optimize_with_opi(
+                target,
+                calculator,
+                charge=molecular_charge,
+                multiplicity=molecular_multiplicity,
+                timeout=timeout,
+            )
+            target.set_positions(result.atoms.get_positions())
+            optimization_backend = "orca-pi"
+        else:
+            if orca_backend and calculator is None:
+                raise ValueError(
+                    "The ORCA backend requires a configured orca-pi Calculator "
+                    "or ASE ORCA calculator"
+                )
+            internally_created = calculator is None
+            if calculator is None:
+                calculator = get_mace_omol_calculator(
+                    model_path=model_path,
+                    device=device,
+                    default_dtype=default_dtype,
+                    **calculator_kwargs,
+                )
+            if not isinstance(calculator, BaseCalculator):
+                raise TypeError(
+                    "calculator must be an ASE calculator or an orca-pi Calculator"
+                )
+            try:
+                result = optimize_with_ase(
+                    target,
+                    calculator,
+                    optimizer=optimizer,
+                    fmax=fmax,
+                    steps=steps,
+                    logfile=logfile,
+                    trajectory=trajectory,
+                    restart=restart,
+                    optimizer_kwargs=optimizer_kwargs,
+                )
+            except RuntimeError as exc:
+                calculator_device = str(getattr(calculator, "device", ""))
+                if not (
+                    internally_created
+                    and calculator_device.startswith("cuda")
+                    and is_cuda_failure(exc)
+                ):
+                    raise
+                warnings.warn(
+                    "MACE CUDA geometry optimization failed; retrying on CPU",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
+                calculator = get_mace_omol_calculator(
+                    model_path=model_path,
+                    device="cpu",
+                    default_dtype=default_dtype,
+                    **calculator_kwargs,
+                )
+                result = optimize_with_ase(
+                    target,
+                    calculator,
+                    optimizer=optimizer,
+                    fmax=fmax,
+                    steps=steps,
+                    logfile=logfile,
+                    trajectory=trajectory,
+                    restart=restart,
+                    optimizer_kwargs=optimizer_kwargs,
+                )
+            optimization_backend = "mace-omol" if mace_backend else "ase-orca"
+
+        _record_optimization_result(
+            target, result=result, backend=optimization_backend
+        )
+        if not result.converged:
+            message = (
+                f"Geometry optimization did not converge within {steps} ASE steps"
+                if optimization_backend != "orca-pi"
+                else "ORCA geometry optimization did not report convergence"
+            )
+            if raise_on_failure:
+                raise RuntimeError(message)
+            warnings.warn(message, RuntimeWarning, stacklevel=2)
+        return target
+
+    get_geometry_optimization = get_GeoOptimization
+
 
 class MoleculeGroup(Sequence[Molecule]):
     """An ordered collection of molecular structures, such as a trajectory."""
@@ -315,6 +464,118 @@ class MoleculeGroup(Sequence[Molecule]):
             energies.append(energy)
         return energies
 
+    def get_GeoOptimization(
+        self,
+        calculator: Any | None = None,
+        *,
+        backend: str = "mace",
+        calculator_factory: Callable[[int, Molecule], Any] | None = None,
+        model_path: str | Path | None = None,
+        device: str | None = None,
+        charge: int | None = None,
+        multiplicity: int | None = None,
+        default_dtype: str = "float64",
+        optimizer: str | type[Optimizer] = "LBFGS",
+        fmax: float = 0.05,
+        steps: int = 500,
+        logfile: str | Path | None = None,
+        trajectory: str | Path | None = None,
+        restart: str | Path | None = None,
+        optimizer_kwargs: dict[str, Any] | None = None,
+        timeout: int = -1,
+        inplace: bool = False,
+        raise_on_failure: bool = False,
+        **calculator_kwargs: Any,
+    ) -> MoleculeGroup:
+        """Optimize every geometry independently and return the optimized group.
+
+        A single default MACE calculator is shared. Use ``calculator_factory``
+        for ORCA so each frame can have a distinct basename and run directory.
+        File paths for ASE logs, trajectories, and restarts receive a numbered
+        ``.frame-NNNN`` suffix to avoid collisions between frames.
+        """
+        if calculator is not None and calculator_factory is not None:
+            raise ValueError("Pass calculator or calculator_factory, not both")
+        if (calculator is not None or calculator_factory is not None) and calculator_kwargs:
+            raise TypeError(
+                "calculator_kwargs cannot be used with a preconfigured calculator "
+                "or calculator_factory"
+            )
+        if not self:
+            return self if inplace else type(self)([])
+
+        normalized_backend = backend.lower().replace("_", "-")
+        default_mace_calculator = False
+        if (
+            calculator is None
+            and calculator_factory is None
+            and normalized_backend in {"mace", "mace-omol", "omol"}
+        ):
+            from .energy import get_mace_omol_calculator
+
+            calculator = get_mace_omol_calculator(
+                model_path=model_path,
+                device=device,
+                default_dtype=default_dtype,
+                **calculator_kwargs,
+            )
+            default_mace_calculator = True
+
+        optimized: list[Molecule] = []
+        for frame_index, molecule in enumerate(self):
+            frame_calculator = (
+                calculator_factory(frame_index, molecule)
+                if calculator_factory is not None
+                else calculator
+            )
+            frame_kwargs = dict(
+                calculator=frame_calculator,
+                backend=backend,
+                charge=charge,
+                multiplicity=multiplicity,
+                optimizer=optimizer,
+                fmax=fmax,
+                steps=steps,
+                logfile=_frame_output_path(logfile, frame_index),
+                trajectory=_frame_output_path(trajectory, frame_index),
+                restart=_frame_output_path(restart, frame_index),
+                optimizer_kwargs=optimizer_kwargs,
+                timeout=timeout,
+                inplace=inplace,
+                raise_on_failure=raise_on_failure,
+            )
+            try:
+                optimized_molecule = molecule.get_GeoOptimization(**frame_kwargs)
+            except RuntimeError as exc:
+                if not (
+                    default_mace_calculator
+                    and str(getattr(calculator, "device", "")).startswith("cuda")
+                ):
+                    raise
+                from .energy import is_cuda_failure
+
+                if not is_cuda_failure(exc):
+                    raise
+                warnings.warn(
+                    "MACE CUDA group optimization failed; retrying on CPU",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
+                from .energy import get_mace_omol_calculator
+
+                calculator = get_mace_omol_calculator(
+                    model_path=model_path,
+                    device="cpu",
+                    default_dtype=default_dtype,
+                    **calculator_kwargs,
+                )
+                frame_kwargs["calculator"] = calculator
+                optimized_molecule = molecule.get_GeoOptimization(**frame_kwargs)
+            optimized.append(optimized_molecule)
+        return self if inplace else type(self)(optimized)
+
+    get_geometry_optimization = get_GeoOptimization
+
     def plot_energy(
         self,
         *,
@@ -392,6 +653,35 @@ class MoleculeGroup(Sequence[Molecule]):
         if output is not None:
             ax.figure.savefig(Path(output))
         return ax
+
+
+def _record_optimization_result(
+    molecule: Molecule, *, result: Any, backend: str
+) -> None:
+    molecule.info["optimization_backend"] = backend
+    molecule.info["optimization_converged"] = bool(result.converged)
+    if result.steps is not None:
+        molecule.info["optimization_steps"] = int(result.steps)
+    if result.energy_ev is not None:
+        molecule.info["energy"] = float(result.energy_ev)
+        molecule.info["energy_backend"] = backend
+    if result.energy_hartree is not None:
+        molecule.info["orca_energy_hartree"] = float(result.energy_hartree)
+    if result.max_force_ev_per_angstrom is not None:
+        molecule.info["max_force_ev_per_angstrom"] = float(
+            result.max_force_ev_per_angstrom
+        )
+
+
+def _frame_output_path(
+    path: str | Path | None, frame_index: int
+) -> str | Path | None:
+    if path is None or path == "-":
+        return path
+    output_path = Path(path)
+    return output_path.with_name(
+        f"{output_path.stem}.frame-{frame_index:04d}{output_path.suffix}"
+    )
 
 
 def _validate_xyz_path(
