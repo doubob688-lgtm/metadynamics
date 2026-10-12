@@ -26,12 +26,9 @@ dist/
 Thumbs.db
 
 # Logs and temporary files
-*.log
 *.tmp
 *.temp
 *.bak
-*.out
-*.err
 
 # Common compiled and binary files
 *.a
