@@ -11,9 +11,19 @@ This workspace is for metadynamics research into the reactivity of a novel diazi
 - Invoke that interpreter directly by default for scripts, tests, and package checks.
 - Do not install packages into the system Python. Add or change dependencies only when needed, and record them in the project's environment or dependency files when those files exist.
 
+## Repository structure
+
+- `src/` contains reusable project source code, including simulation components, calculator adapters, collective-variable definitions, and analysis utilities.
+- `model/` contains local model files. Use the MACE OMol model stored in this directory as the default potential.
+- `result/` contains generated calculation and analysis results. Organize outputs into clearly named run-specific subdirectories and avoid mixing generated data with source code.
+- `script/` contains runnable Python (`.py`) and Bash (`.sh`) scripts used to launch simulations, analyses, setup tasks, and other workflows.
+- Keep substantial reusable logic in `src/`; scripts in `script/` should remain thin entry points that import and configure that logic.
+- Write generated outputs to `result/` by default unless the user specifies another destination.
+
 ## Metadynamics architecture
 
 - Implement metadynamics through the ASE–PLUMED integration.
+- Use the MACE OMol model from `model/` as the default calculator unless the user or a workflow explicitly selects another MACE model or PySCF.
 - Keep simulation setup, collective-variable definitions, PLUMED input, calculator construction, and trajectory analysis separated where practical.
 - Design metadynamics workflows so the ASE calculator backend can be switched between MACE and PySCF without rewriting the sampling logic.
 - Avoid backend-specific assumptions in shared metadynamics code. Put MACE- and PySCF-specific configuration behind small, explicit calculator factories or adapters.
