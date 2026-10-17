@@ -1,8 +1,7 @@
-!DOCKER(GFN2-XTB)
+!DOCKER(XTB)
 
 %DOCKER
-     GUEST "Diethyl_ether.xyz"
+    GUEST "Diethyl_ether.xyz"
 END
 
 *XYZFILE 0 1 Starting_Cluster.xyz
-
