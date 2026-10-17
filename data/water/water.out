@@ -54,9 +54,6 @@
                          Program Version 6.1.1  -  RELEASE   -
                                 (GIT: $487d211c$)
                           ($2025-11-21 10:33:24 +0100$)
-                                                                         
-                                  - NO-DMRG VERSION -                    
-                                                                         
 
 
  With contributions from (in alphabetic order):
@@ -168,16 +165,16 @@ interface, adapt or use parts of their codes:
    LAPACKE interface :  Fast linear algebra routines
    SCALAPACK package :  Parallel linear algebra routines
    Shared memory     :  Shared parallel matrices
-   BLAS/LAPACK       :  OpenBLAS 0.3.29  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell SINGLE_THREADED
-        Core in use  :  Haswell
+   BLAS/LAPACK       :  OpenBLAS 0.3.29  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Zen SINGLE_THREADED
+        Core in use  :  Zen
    Copyright (c) 2011-2014, The OpenBLAS Project
 
 
   ***********************************
-  * Starting time: Sat Oct 17 16:24:33 2026
-  * Host name:     douboyu
-  * Process ID:    1238
-  * Working dir.:  /mnt/c/Users/Bobdo/diazirine/data/water
+  * Starting time: Sat Oct 17 09:38:25 2026
+  * Host name:     cx3-13-24
+  * Process ID:    61720
+  * Working dir.:  /rds/general/user/bd924/home/metadynamics/data/water
   ***********************************
 
 Your calculation utilizes the semiempirical GFN2-xTB method
@@ -200,11 +197,27 @@ WARNING: Found dipole moment calculation with XTB calculation
   ===> : Switching off dipole moment calculation
 
 
-WARNING: otool_xtb not available.
-         Trying xtb instead   ... failed!
-  ===> : Please set the XTBEXE environment variable to the XTB executable or
-         provide the xtb executable in the same path as where the orca binaries are located.
-         Aborting the run.
+================================================================================
+                                       INPUT FILE
+================================================================================
+NAME = water.inp
+|  1> !XTB
+|  2> 
+|  3> %DOCKER
+|  4>      GUEST "water.xyz"
+|  5> END
+|  6> 
+|  7> * xyz 0 1
+|  8> O  0.0000  0.0000  0.0626
+|  9> H -0.7920  0.0000 -0.4973
+| 10> H  0.7920  0.0000 -0.4973
+| 11> *
+| 12> 
+| 13>                          ****END OF INPUT****
+================================================================================
 
-[file orca_tools/Tool-Misc/mmtopol.cpp, line 1801]: Error (ORCA_MAIN): ... aborting the run
+                               ***************
+                               * ORCA Docker *
+                               ***************
 
+Reading guests from file             water.xyz

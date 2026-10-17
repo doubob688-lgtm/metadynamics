@@ -1,0 +1,1 @@
+/var/spool/pbs/mom_priv/jobs/4390477.pbs-7.SC: line 10: 3218083 Segmentation fault      (core dumped) /sw-eb/software/ORCA/6.1.1-gompi-2024a-avx2/bin/orca sm_et2o_docking.inp > sm_et2o_docking.out

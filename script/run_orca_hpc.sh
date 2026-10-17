@@ -39,7 +39,7 @@ cp "$INPUT_FILE" .
 # ==== running orca ====
 echo "Start running orca: $JOB_NAME"
 echo "Running directory: $RUN_DIR"
-orca "${JOB_NAME}.inp" > "${JOB_NAME}.out"
+/sw-eb/software/ORCA/6.1.1-gompi-2024a-avx2/bin/orca  "${JOB_NAME}.inp" > "${JOB_NAME}.out"
 
 # 自动检查是否正常结束
 if grep -q "ORCA TERMINATED NORMALLY" "${JOB_NAME}.out"; then

@@ -1,0 +1,11 @@
+#!/bin/bash
+#PBS -l select=1:ncpus=16:mpiprocs=16:mem=20gb
+#PBS -l walltime=00:30:00
+
+module load gompi/2024a
+module load ORCA/6.1.1-gompi-2024a-avx2
+
+cd /rds/general/user/bd924/home/metadynamics/script
+
+./run_orca_hpc.sh sm_et2o_docking sm_et2O_docking
+

@@ -1,4 +1,4 @@
-!DOCKER(XTB)
+!XTB2
 
 %DOCKER
     GUEST "Diethyl_ether.xyz"
