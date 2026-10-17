@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N orca_dock_array
+#PBS -l walltime=1:00:00
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -J 1-5                  
+
+module purge
+module load ORCA/6.1.1-gompi-2024a-avx2
+
+export OMP_STACKSIZE=4G
+export OMPI_MCA_coll_hcoll_enable=0
+
+# 获取任务编号 (1, 2, 3, 4, 5)
+RUN_ID=${PBS_ARRAY_INDEX:-${PBS_ARRAYID}}
+
+# 回到你提交作业的主目录
+cd $PBS_O_WORKDIR
+
+# ==========================================
+# 核心操作：为每个任务创建独立文件夹并进入
+# ==========================================
+RUN_DIR="run_${RUN_ID}"
+mkdir -p $RUN_DIR
+cd $RUN_DIR
+
+# 把原始输入文件（.inp 和 .xyz）从上一级的 inputs 文件夹复制过来
+cp ../inputs/* .
+
+echo "Starting ORCA docking for run ${RUN_ID}..."
+# 运行 ORCA（在 run_x 目录下运行，所有输出和中间文件都会留在这里）
+/sw-eb/software/ORCA/6.1.1-gompi-2024a-avx2/bin/orca sm_et2o_docking.inp > sm_et2o_docking_${RUN_ID}.out
+
+echo "Finished run ${RUN_ID}."
