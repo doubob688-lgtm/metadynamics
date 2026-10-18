@@ -1,6 +1,6 @@
 !XTB2
 
-%pal nprocs 4 end
+%pal nprocs 1 end
 
 %DOCKER
     GUEST "Diethyl_ether.xyz"

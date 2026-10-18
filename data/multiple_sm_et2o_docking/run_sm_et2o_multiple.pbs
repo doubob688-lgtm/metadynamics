@@ -4,8 +4,10 @@
 #PBS -l select=1:ncpus=4:mem=16gb
 #PBS -J 1-5                  
 
-module purge
+module load tools
 module load ORCA/6.1.1-gompi-2024a-avx2
+module load gompi/2024a
+module load xtb/6.7.1-gfbf-2024a
 
 export OMP_STACKSIZE=4G
 export OMPI_MCA_coll_hcoll_enable=0
