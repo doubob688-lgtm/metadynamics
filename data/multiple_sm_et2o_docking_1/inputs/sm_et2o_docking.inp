@@ -1,0 +1,13 @@
+!XTB2 ALPB(diethylether)
+
+%pal nprocs 1 end
+
+%DOCKER
+    GUEST "Diethyl_ether.xyz"
+    NREPEATGUEST 5
+    CUMULATIVE TRUE
+    FIXHOST TRUE
+    NOOPT TRUE
+END
+
+*XYZFILE 0 1 Starting_Cluster.xyz
