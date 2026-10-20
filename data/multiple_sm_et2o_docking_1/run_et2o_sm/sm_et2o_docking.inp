@@ -1,0 +1,9 @@
+!XTB2 ALPB(diethylether)
+
+%DOCKER
+    GUEST "Diethyl_ether.xyz"
+    NREPEATGUEST 5
+    FIXHOST TRUE
+END
+
+*XYZFILE 0 1 Starting_Cluster.xyz
