@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N MD_B3LYP_D3BJ_def2-svp
+#PBS -l walltime=23:00:00
+#PBS -l select=1:ncpus=64:mem=192gb                  
+
+module load tools
+module load ORCA/6.1.1-gompi-2024a-avx2
+module load gompi/2024a
+
+export OMP_STACKSIZE=4G
+
+# 回到你提交作业的主目录
+cd $PBS_O_WORKDIR
+
+# ==========================================
+# 核心操作：为每个任务创建独立文件夹并进入
+# ==========================================
+RUN_DIR="run_$PBS_JOBNAME"
+mkdir -p $RUN_DIR
+cd $RUN_DIR
+
+# 把原始输入文件（.inp 和 .xyz）从上一级的 inputs 文件夹复制过来
+cp ../inputs/* .
+
+echo "Starting ORCA docking for run ${PBS_JOBNAME}..."
+# 运行 ORCA（在 run_x 目录下运行，所有输出和中间文件都会留在这里）
+/sw-eb/software/ORCA/6.1.1-gompi-2024a-avx2/bin/orca ${PBS_JOBNAME}.inp > ${PBS_JOBNAME}.out
+
+echo "Finished run ${PBS_JOBNAME}."
