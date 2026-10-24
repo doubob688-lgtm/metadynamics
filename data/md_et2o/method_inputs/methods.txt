@@ -1,0 +1,4 @@
+B3LYP D3BJ def2-SVP CPCM(diethylether)
+M06-2X D3(0) def2-SVP CPCM(diethylether)
+PBE0 D4 def2-SVP CPCM(diethylether)
+XTB2 ALPB(diethylether)

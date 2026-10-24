@@ -1,0 +1,18 @@
+#!/bin/bash
+# Run one generated ORCA MD task in its method-structure directory.
+#PBS -N md_4_2
+#PBS -l walltime=23:00:00
+#PBS -l select=1:ncpus=64:mem=192gb
+#PBS -o /mnt/c/Users/Bobdo/diazirine/run/MD/md_et2o/XTB2_ALPB_diethylether/run_struc2_structure_0002/hpc_log/pbs.out
+#PBS -e /mnt/c/Users/Bobdo/diazirine/run/MD/md_et2o/XTB2_ALPB_diethylether/run_struc2_structure_0002/hpc_log/pbs.err
+
+set -euo pipefail
+
+module load tools
+module load ORCA/6.1.1-gompi-2024a-avx2
+module load gompi/2024a
+
+export OMP_STACKSIZE=4G
+
+cd "$PBS_O_WORKDIR"
+/sw-eb/software/ORCA/6.1.1-gompi-2024a-avx2/bin/orca run_md.inp > run_md.out
