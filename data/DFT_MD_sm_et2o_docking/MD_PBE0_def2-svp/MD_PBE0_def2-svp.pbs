@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N MD_PBE0_D4_def2-SVP
 #PBS -l walltime=23:00:00
-#PBS -l select=1:ncpus=64:mem=192gb                  
+#PBS -l select=1:ncpus=64:mpiprocs=64:mem=192gb                  
 
 module load tools
 module load ORCA/6.1.1-gompi-2024a-avx2

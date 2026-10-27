@@ -1,0 +1,21 @@
+
+Warning: Function "Initvel" cannot take flag "NHC", not using it as an argument.
+In MD_B3LYP_D3BJ_def2-svp.mdinput:3:
+        Thermostst NHC 195.15_K Timecon 10.0_fs
+                   ^^^
+
+
+REC_CheckUnknownArguments(): Error: Unknown identifier "Thermostst" when handling function "Initvel".
+In MD_B3LYP_D3BJ_def2-svp.mdinput:3:
+        Thermostst NHC 195.15_K Timecon 10.0_fs
+        ^^^^^^^^^^
+
+
+Error handling functions.
+
+
+Errors occurred while reading / parsing the input (0.004 s). orca_md is leaving.
+
+orca_md aborted by error.
+
+[file orca_main/main_driver_md.cpp, line 186]: 

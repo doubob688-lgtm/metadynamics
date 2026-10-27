@@ -2,7 +2,7 @@
 # Run one generated ORCA MD task in its method-structure directory.
 #PBS -N __JOB_NAME__
 #PBS -l walltime=23:00:00
-#PBS -l select=1:ncpus=64:mem=192gb
+#PBS -l select=1:ncpus=64:mpiprocs=64:mem=192gb
 #PBS -o __HPC_LOG_DIR__/pbs.out
 #PBS -e __HPC_LOG_DIR__/pbs.err
 

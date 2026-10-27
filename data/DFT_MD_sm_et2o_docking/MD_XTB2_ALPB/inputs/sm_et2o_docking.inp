@@ -1,9 +1,0 @@
-!XTB2
-
-%pal nprocs 1 end
-
-%DOCKER
-    GUEST "Diethyl_ether.xyz"
-END
-
-*XYZFILE 0 1 Starting_Cluster.xyz

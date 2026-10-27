@@ -1,0 +1,16 @@
+Starting ORCA docking for run MD_XTB2_ALPB...
+Finished run MD_XTB2_ALPB.
+PBS job ID: 4439663.pbs-7
+PBS nodefile: /var/spool/pbs/aux/4439663.pbs-7
+Allocated MPI slots: 1
+Node allocation:
+      1 cx3-5-0.cx3.hpc.ic.ac.uk
+
+====================================
+CPU Time used: 00:00:20
+CPU Percent: 85%
+Memory usage: 219164kb
+Approx Power usage: 0.0
+Walltime usage: 00:00:30
+
+====================================

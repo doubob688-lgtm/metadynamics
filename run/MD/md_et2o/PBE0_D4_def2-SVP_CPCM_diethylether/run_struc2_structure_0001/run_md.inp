@@ -7,7 +7,7 @@
 %md
         Timestep 1.0_fs
         Initvel 195.15_K
-        Thermostst NHC 195.15_K Timecon 10.0_fs
+        Thermostat NHC 195.15_K Timecon 10.0_fs
         Dump Position Stride 20 Filename "trajectory.xyz"
         Run 1000
 end

@@ -1,0 +1,15 @@
+!MD PBE0 D4 def2-SVP CPCM(diethylether)
+
+%pal nprocs 4 end
+
+%maxcore 2048
+
+%md
+	Timestep 1.0_fs
+	Initvel 195.15_K
+	Thermostat NHC 195.15_K Timecon 10.0_fs
+	Dump Position Stride 20 Filename "trajectory.xyz"
+	Run 1000
+end
+
+*xyzfile 0 1 Starting_Cluster.xyz

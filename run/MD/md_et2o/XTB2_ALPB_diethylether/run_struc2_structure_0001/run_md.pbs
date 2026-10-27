@@ -2,9 +2,9 @@
 # Run one generated ORCA MD task in its method-structure directory.
 #PBS -N md_4_1
 #PBS -l walltime=23:00:00
-#PBS -l select=1:ncpus=64:mem=192gb
-#PBS -o /mnt/c/Users/Bobdo/diazirine/run/MD/md_et2o/XTB2_ALPB_diethylether/run_struc2_structure_0001/hpc_log/pbs.out
-#PBS -e /mnt/c/Users/Bobdo/diazirine/run/MD/md_et2o/XTB2_ALPB_diethylether/run_struc2_structure_0001/hpc_log/pbs.err
+#PBS -l select=1:ncpus=64:mpiprocs=64:mem=192gb
+#PBS -o /rds/general/user/bd924/home/metadynamics/run/MD/md_et2o/XTB2_ALPB_diethylether/run_struc2_structure_0001/hpc_log/pbs.out
+#PBS -e /rds/general/user/bd924/home/metadynamics/run/MD/md_et2o/XTB2_ALPB_diethylether/run_struc2_structure_0001/hpc_log/pbs.err
 
 set -euo pipefail
 
