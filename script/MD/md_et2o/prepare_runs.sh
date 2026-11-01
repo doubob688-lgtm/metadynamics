@@ -5,7 +5,7 @@ set -euo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 project_root="$(cd -- "$script_dir/../../.." && pwd)"
-run_root="${diazirine:-$project_root}/run/MD/md_et2o"
+run_root="${diazirine:-$project_root}/run/MD/md_et2o_5ps"
 methods_file="$project_root/data/md_et2o/method_inputs/methods.txt"
 xyz_dir="$project_root/data/md_et2o/xyz_inputs"
 

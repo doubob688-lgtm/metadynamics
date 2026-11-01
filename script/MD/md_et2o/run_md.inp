@@ -1,6 +1,6 @@
 !MD __METHOD__
 
-%pal nprocs 64 end
+%pal nprocs 128 end
 
 %maxcore 2048
 
@@ -9,7 +9,7 @@
         Initvel 195.15_K
         Thermostat NHC 195.15_K Timecon 10.0_fs
         Dump Position Stride 20 Filename "trajectory.xyz"
-        Run 1000
+        Run 5000
 end
 
 *xyzfile 0 1 __XYZ_FILE__
