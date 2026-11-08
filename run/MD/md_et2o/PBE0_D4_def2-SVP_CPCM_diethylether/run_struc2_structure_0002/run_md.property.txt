@@ -1096,29 +1096,30 @@ $Solvation_Details
 $End
 $SCF_Timings
    &GeometryIndex 1
-   &TOTAL [&Type "Double"]       2.8841946000000000e+01
-   &PREP [&Type "Double"]       6.4483290000000002e+00
-   &FOCK [&Type "Double"]       2.2441718000000002e+01
-   &DENS [&Type "Double"]       6.1424500000000748e-01
-   &ETOT [&Type "Double"]       4.4268599999999125e-01
-   &POP [&Type "Double"]       2.8233600000000081e-01
-   &TRAFO [&Type "Double"]       4.5393499999999953e-01
-   &DIIS [&Type "Double"]       1.7886020000000045e+00
-   &SOSCF [&Type "Double"]       8.1959700000000346e-01
-   &XC [&Type "Double"]       4.1802349999999944e+00
-   &FOCKSTART [&Type "Double"]       1.6978599999999489e-01
-   &SOLV [&Type "Double"]       6.1578400000000002e+00
-   &SOLV_INIT [&Type "Double"]       9.6292199999999983e-01
-   &INT_PREP [&Type "Double"]       1.9999999985031991e-06
-   &INT_BF [&Type "Double"]       3.0044499999996965e-01
-   &INT_DENS [&Type "Double"]       2.1192699999997977e-01
-   &INT_DENSIO [&Type "Double"]       1.7404982719000003e+04
-   &INT_FUNC [&Type "Double"]       3.8587000000008587e-02
-   &INT_POT [&Type "Double"]       1.3962700000001504e-01
-   &INT_POTIO [&Type "Double"]       1.3569099999997114e-01
-   &INT_SUM [&Type "Double"]       2.7310000000024814e-03
-   &SPLITRIJ [&Type "Double"]       2.4269479999999986e+00
-   &COSX [&Type "Double"]       1.0243766999999995e+01
+   &TOTAL [&Type "Double"]       2.7716684999999998e+01
+   &PREP [&Type "Double"]       8.3781800000000004e+00
+   &FOCK [&Type "Double"]       2.1668582999999995e+01
+   &DENS [&Type "Double"]       6.4113100000000145e-01
+   &ETOT [&Type "Double"]       4.5644600000000679e-01
+   &POP [&Type "Double"]       2.5450100000000475e-01
+   &TRAFO [&Type "Double"]       4.4186799999999771e-01
+   &DIIS [&Type "Double"]       1.8597880000000018e+00
+   &SOSCF [&Type "Double"]       8.2878700000000016e-01
+   &XC [&Type "Double"]       2.8123519999999846e+00
+   &FOCKSTART [&Type "Double"]       1.7984200000000250e-01
+   &SOLV [&Type "Double"]       5.9469199999999951e+00
+   &SOLV_INIT [&Type "Double"]       9.9844999999999917e-01
+   &SOLV_FINAL [&Type "Double"]       9.9999999747524271e-07
+   &INT_PREP [&Type "Double"]       1.0000000010279564e-06
+   &INT_BF [&Type "Double"]       3.0463899999998389e-01
+   &INT_DENS [&Type "Double"]       2.1187099999998260e-01
+   &INT_DENSIO [&Type "Double"]       1.8883920678000006e+04
+   &INT_FUNC [&Type "Double"]       3.9404999999996804e-02
+   &INT_POT [&Type "Double"]       1.4464199999997085e-01
+   &INT_POTIO [&Type "Double"]       4.3064000000025970e-02
+   &INT_SUM [&Type "Double"]       2.4149999999991678e-03
+   &SPLITRIJ [&Type "Double"]       2.5671640000000018e+00
+   &COSX [&Type "Double"]       1.0495052000000014e+01
 $End
 $VdW_Correction
    &GeometryIndex 1

@@ -116,6 +116,6 @@ $Geometry
 $End
 $Single_Point_Data
    &GeometryIndex 1
-   &FinalEnergy [&Type "Double"]      -1.2973558572073000e+02  "Final single point energy"
+   &FinalEnergy [&Type "Double"]      -1.2973558574812000e+02  "Final single point energy"
    &Converged [&Type "Boolean"] true
 $End
