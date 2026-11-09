@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import os
 from pathlib import Path
@@ -192,29 +193,37 @@ def plot_all_thermodynamic_variables(method_dir: Path) -> None:
 
 
 def main() -> None:
-    for method_dir in sorted(path for path in RUN_ROOT.iterdir() if path.is_dir()):
-        plot_method_series(
-            method_dir,
-            column="E.Drift",
-            ylabel="E. drift",
-            title="Energy drift",
-            output_name="E_drift_vs_time.png",
-        )
-        plot_method_series(
-            method_dir,
-            column="Temp",
-            ylabel="Temperature (K)",
-            title="Temperature",
-            output_name="Temperature_vs_time.png",
-        )
-        plot_method_series(
-            method_dir,
-            column="E_Pot",
-            ylabel="Potential energy (Eh)",
-            title="Potential energy",
-            output_name="E_pot_vs_time.png",
-        )
-        plot_temperature_standard_deviation(method_dir)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run-root", type=Path, default=RUN_ROOT)
+    parser.add_argument("--thermodynamic-only", action="store_true")
+    args = parser.parse_args()
+
+    for method_dir in sorted(
+        path for path in args.run_root.iterdir() if path.is_dir()
+    ):
+        if not args.thermodynamic_only:
+            plot_method_series(
+                method_dir,
+                column="E.Drift",
+                ylabel="E. drift",
+                title="Energy drift",
+                output_name="E_drift_vs_time.png",
+            )
+            plot_method_series(
+                method_dir,
+                column="Temp",
+                ylabel="Temperature (K)",
+                title="Temperature",
+                output_name="Temperature_vs_time.png",
+            )
+            plot_method_series(
+                method_dir,
+                column="E_Pot",
+                ylabel="Potential energy (Eh)",
+                title="Potential energy",
+                output_name="E_pot_vs_time.png",
+            )
+            plot_temperature_standard_deviation(method_dir)
         plot_all_thermodynamic_variables(method_dir)
 
 

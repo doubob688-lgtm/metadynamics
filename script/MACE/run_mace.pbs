@@ -1,0 +1,31 @@
+#!/bin/bash
+# Run MACE OMol energy and force evaluation on one Imperial GPU node.
+#PBS -N mace_omol
+#PBS -q gpu72
+#PBS -l walltime=01:00:00
+#PBS -l select=1:ncpus=4:mem=24gb:ngpus=1
+#PBS -o run/MACE/hpc_log/
+#PBS -e run/MACE/hpc_log/
+
+set -euo pipefail
+
+module purge
+module load tools/prod
+module load "${CUDA_MODULE:-CUDA/12.6.0}"
+
+CONDA_ROOT="${CONDA_ROOT:-${HOME}/miniforge3}"
+eval "$("${CONDA_ROOT}/bin/conda" shell.bash hook)"
+conda activate "${CONDA_ROOT}/envs/metad312"
+
+cd "${PBS_O_WORKDIR}"
+
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+
+python \
+    script/MACE/run_mace.py \
+    --input-dir data/MACE/xyz_inputs \
+    --model model/MACE-omol-0-extra-large-1024.model \
+    --output-dir run/MACE \
+    --device auto \
+    --dtype float32
